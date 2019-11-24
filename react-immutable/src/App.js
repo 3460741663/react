@@ -2,6 +2,9 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import immutable from 'immutable'
+import Header from './Header'
+import Main from './Main'
+import Footer from './Footer'
 // 可变
 let a = [0, 1, 2];
 a.push(3);
@@ -25,29 +28,32 @@ let obj = {
 //   b: 2
 // }
 let obj2 = immutable.fromJS(obj);
-console.log(obj2.getIn(['b', 'c'], 'default'));
-let obj3 = obj2.setIn(['d', 'e'], 'ee');
+window.c = 0;
+// console.log(obj2.getIn(['b', 'c'], 'default'));
+// let obj3 = obj2.setIn(['d', 'e'], 'ee');
 // obj.b && obj.b.c
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {
+    store: obj2
+  }
+  HandleSet = ( ) => {
+    let store = this.state.store.setIn(['d', 'e'], '456');
+    this.setState({
+      store
+    })
+  }
+  render() {
+    const store = this.state.store
+    return(
+      <div>
+        <button onClick={this.HandleSet}>set d</button>
+        <Header value={store.get('a')}/>
+        <Main value={store.get('b')} />
+        <Footer value={store.get('d')} />
+      </div>
+    )
+  }
 }
 
 export default App;
