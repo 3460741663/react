@@ -1,6 +1,6 @@
 ## 组件，既可以在客户端，也可以在服务端运行
 同构 既可以在服务端跑，又要在客户端跑
-首屏直出：
+首屏直出：客户端访问的第一屏，由服务端渲染，之后的页面变化都是SPA
 SPA:
 1. <div id = "app"></div>没有实质性的内容
 2. js
@@ -70,4 +70,49 @@ expres.static('public')
 public /public/index.js
 // 作为node 服务返回的html 需要加载的资源
 ```
+## 同构store
+生成带有数据的html
+用户请求： 生成带有数据的HTML
+用户请求的这一页数据，都有后端生成在HTML里面，前端不需要再去发axios请求
 
+
+
+
+
+
+redux使用流程
+1. 在应用最外围使用Provider包裹住，然后传入一个store
+```js
+    <Provider store={getClientStore()}>
+      <BrowserRouter>
+        <div>{ renderRoutes(routes) }</div>
+      </BrowserRouter>
+    </Provider>
+```
+2. 所以需要先创建store
+```js
+export const getClientStore = () => {
+  return createStore(reducer, applyMiddleware(thunk));
+}
+```
+3. createStore之前需要有一个reducer, 且如果需要使用中间件则需要applyMiddleware(thunk))
+```js
+export default combineReducers({
+  home: homeReducer
+})
+```
+使用combineReducers把所有的reducer拼成一个reducer
+真正的reducer长这样
+```js
+const defaultState = {
+  commentList: []
+};
+export default (state = defaultState, actions) => {
+  switch(actions.type){
+    case 'HOME_LIST' : return {... state, commentList:actions.commentList}
+    default:return state
+  }
+}
+```
+至此已经完整创建一个store
+4. 

@@ -1,18 +1,23 @@
 import React from 'react';
-import {  renderToString  } from 'react-dom/server';
+import { renderToString } from 'react-dom/server';
 import Header from '../components/Header';
 import { StaticRouter } from 'react-router-dom'
 import routes from '../routers'
 import { renderRoutes } from 'react-router-config'
+import { Provider } from "react-redux";
+import { getServerStore } from '../store/index'
+// 每个用户的请求过来，都会创建一个新的它自己的store
 // BrowserRouter h5 history api
 // 内存 router ['/', '/a', '/a/c']
 
 export default (req) => {
   // jsx
   const App = (
-    <StaticRouter location={req.path}>
-     <div>{ renderRoutes(routes) }</div>
-    </StaticRouter>
+    <Provider store={getServerStore()}>
+      <StaticRouter location={req.path}>
+        <div>{renderRoutes(routes)}</div>
+      </StaticRouter>
+    </Provider>
   )
   return `
   <!DOCTYPE html>
