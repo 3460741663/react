@@ -11,11 +11,12 @@ export default [
       {
         path: '/',
         component: Home,
+        loadData: Home.loadData,
         exact: true
       },
       {
         path: '/login',
-        component: Login
+        component: Login,
       }
     ]
   }

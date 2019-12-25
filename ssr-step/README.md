@@ -70,17 +70,8 @@ expres.static('public')
 public /public/index.js
 // 作为node 服务返回的html 需要加载的资源
 ```
-## 同构store
-生成带有数据的html
-用户请求： 生成带有数据的HTML
-用户请求的这一页数据，都有后端生成在HTML里面，前端不需要再去发axios请求
 
-
-
-
-
-
-redux使用流程
+# redux使用流程
 1. 在应用最外围使用Provider包裹住，然后传入一个store
 ```js
     <Provider store={getClientStore()}>
@@ -115,4 +106,57 @@ export default (state = defaultState, actions) => {
 }
 ```
 至此已经完整创建一个store
-4. 
+4. 使用阶段
+
+
+
+
+
+
+
+
+
+
+
+
+## 同构store
+生成带有数据的html
+用户请求： 生成带有数据的HTML
+用户请求的这一页数据，都有后端生成在HTML里面，前端不需要再去发axios请求
+
+# 同构store的流程
+
+1. 命中当前路径下的所有组件
+```js
+const matchRouters = matchRoutes(routes, req.path);
+```
+2. 执行当中的所有请求,完成所有的loadData
+* 获取组件上的数据填充方法，过程：
+  1. 把数据填充的方法loadData挂在组件上
+```js
+Home.loadData = function(store) {
+  // loadData的起点
+  // 这里是Promis则所有的loadData都是Promis， Promise.all
+  // getCommentList是一个action
+  return  store.dispatch(getCommentList())
+}
+```
+  2. 从被命中的组件上取下loadData方法执行,执行其中的请求就是填充redux中的数据,即完成所有的dispatch
+```js
+  matchRouters.forEach(mRouter => {
+    if(mRouter.route.loadData){
+      promises.push(mRouter.route.loadData(store))
+    }
+  })
+```
+  3. 等待loadData执行结束,此时store已经有数据了
+```js
+Promise.all(promises)
+  // promise完成
+  .then(resArray => {
+    // console.log(store)
+    const html = render(req, store);
+    res.send(html)
+  })
+```
+4. 等待所有请求执行完毕后把有数据的store传过去，再渲染页面
