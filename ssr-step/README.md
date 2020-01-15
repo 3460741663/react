@@ -109,16 +109,6 @@ export default (state = defaultState, actions) => {
 4. 使用阶段
 
 
-
-
-
-
-
-
-
-
-
-
 ## 同构store
 生成带有数据的html
 用户请求： 生成带有数据的HTML

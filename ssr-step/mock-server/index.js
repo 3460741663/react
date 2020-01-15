@@ -55,9 +55,9 @@ router.get('/logout', (ctx, next) => {
 router.get('/comment', (ctx, next) => {
   ctx.body = {
     list: [
-      {content: 0},
       {content: 1},
       {content: 2},
+      {content: 3},
     ]
   }
 })
